@@ -3,7 +3,7 @@ create div with id rownumberCellnumber */
 function createSquare(color, rowNumber, colNumber){
     let square = document.createElement('div');
     square.id = `row${rowNumber}column${colNumber}`;
-    square.classList.add(`${color}`)
+    square.classList.add(color)
     return square;
 }
 
@@ -21,10 +21,10 @@ function createRow(rowNumber){
         for (let i = 0; i < 8; i++){
             //alternate cells 
             if (i % 2 === 0) {
-                square = createSquare(white, rowNumber, i);
+                square = createSquare('white', rowNumber, i);
             }
             else {
-                square = createSquare(black, rowNumber, i)
+                square = createSquare('black', rowNumber, i)
             }
             row.append(square);
         }
@@ -33,10 +33,10 @@ function createRow(rowNumber){
         for (let j = 0; j < 8; j++){
             //alternate cells 
             if (j % 2 === 0) {
-                square = createSquare(black, rowNumber, j);
+                square = createSquare('black', rowNumber, j);
             }
             else {
-                square = createSquare(white, rowNumber, j)
+                square = createSquare('white', rowNumber, j)
             }
             row.append(square);
         }
