@@ -80,42 +80,69 @@ const renderKnight = () => {
     }
     return { create, move };
 }
-/* 
-const getCurrentPos = () => {
-    let knightHost = document.getElementsByClassName('hasKnight');
-    let coordinatesRaw = knightHost[0].id;
-    let coordinates = coordinatesRaw.slice(3).split('col');
-    //returns coordinates as array of [row, column]
-    return coordinates;
-} */
+
+class Node {
+    //coord is array of [row, column], numbers indicate available moves
+    constructor(coord, parent = null, one = null, two = null, three= null, four= null, five= null, six= null, seven= null, eight= null){
+        this.parent = parent;
+        this.position = coord;
+        this.row = coord[0];
+        this.col = coord[1];
+        this.one = one;
+        this.two = two;
+        this.three = three;
+        this.four = four;
+        this.five = five;
+        this.six = six;
+        this.seven = seven;
+        this.eight = eight;
+    }
+}
+
+class Tree {
+    constructor( coord ) {
+        this.coord = coord;
+        this.root = buildTree(coord);
+    }
+}
 
 function rangeCheck(array) {
     if (array[0] < 8 && array[0] > -1) {
         if (array[1] < 8 && array[1] > -1){
-            return array;
+            return true;
         }
         return null;
     }
     return null;
 }
 
-class Node {
-    //coord is array of [row, column]
-    constructor(coord, parent = null){
-        this.parent = parent;
-        this.position = coord;
-        this.row = coord[0];
-        this.col = coord[1];
-        this.one = rangeCheck([(this.row + 2), (this.col + 1)]);
-        this.two = rangeCheck([(this.row + 1), (this.col + 2)]);
-        this.three = rangeCheck([(this.row - 1), (this.col + 2)]);
-        this.four = rangeCheck([(this.row - 2), (this.col + 1)]);
-        this.five = rangeCheck([(this.row - 2), (this.col - 1)]);
-        this.six = rangeCheck([(this.row - 1), (this.col - 2)]);
-        this.seven = rangeCheck([(this.row + 1), (this.col - 2)]);
-        this.eight = rangeCheck([(this.row + 2), (this.col - 1)]);
-    }
+function checkArray(array, value) {
+    return array.some((element) => value === element);
 }
-  
-chessBoard().setupBoard();
-renderKnight().create(0, 0);
+let movesArr = [];
+
+//coord is array of [row, column]
+function buildTree(coord){
+    if (!rangeCheck(coord)) return null; 
+    let nodeRef = parseInt(`${coord[0]}`+ `${coord[1]}`);
+    if (checkArray(movesArr, nodeRef)) return null;
+    movesArr.push(nodeRef);
+    let newNode = new Node(coord);
+    newNode.one = buildTree([(coord[0] + 2), (coord[1] + 1)]);
+    newNode.two = buildTree([(coord[0] + 1), (coord[1] + 2)]);
+    newNode.three = buildTree([(coord[0] - 1), (coord[1] + 2)]);
+    newNode.four = buildTree([(coord[0] - 2), (coord[1] + 1)]);
+    newNode.five = buildTree([(coord[0] - 2), (coord[1] - 1)]);
+    newNode.six = buildTree([(coord[0] - 1), (coord[1] - 2)]);
+    newNode.seven = buildTree([(coord[0] + 1), (coord[1] - 2)]);
+    newNode.eight = buildTree([(coord[0] + 2), (coord[1] - 1)]); 
+    return newNode;
+}
+
+function doIt() {
+    movesArr = [];
+    chessBoard().setupBoard();
+    renderKnight().create(0, 0);
+    let tree = new Tree([0,0]);
+    return tree;
+}
