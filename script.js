@@ -43,12 +43,24 @@ const chessBoard = () => {
     };
     /* create board. Call create row in a loop 8 times, passing in 
       i as row number */
-    const createBoard = () => {
+    const setupBoard = () => {
       for (let i = 0; i < 8; i++) {
         createRow(i);
       }
     };
-    return { createBoard };
+    return { setupBoard };
   };
+
+const knight = () => {
+    const placeKnight = (row, col) => {
+        let location = document.getElementById(`row${row}column${col}`);
+        let image = document.createElement('img');
+        image.src = 'horse.svg';
+        image.classList.add('knight');
+        location.appendChild(image);
+    }
+    return { placeKnight };
+}
   
-chessBoard().createBoard();
+chessBoard().setupBoard();
+knight().placeKnight(0, 0);

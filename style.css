@@ -20,3 +20,9 @@
     border: 1px solid rgb(105, 87, 63);
     width: fit-content;
 }
+
+.knight {
+    height: 90%;
+    width: 90%;
+    margin: 3px 0 0 3px;
+}
