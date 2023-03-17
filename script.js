@@ -3,7 +3,7 @@ const chessBoard = () => {
       create div with id rownumberCellnumber */
     const createSquare = (color, rowNumber, colNumber) => {
       let square = document.createElement("div");
-      square.id = `row${rowNumber}column${colNumber}`;
+      square.id = `row${rowNumber}col${colNumber}`;
       square.classList.add(color);
       return square;
     };
@@ -52,15 +52,34 @@ const chessBoard = () => {
   };
 
 const knight = () => {
-    const placeKnight = (row, col) => {
-        let location = document.getElementById(`row${row}column${col}`);
+    const createKnight = (row, col) => {
+        let location = document.getElementById(`row${row}col${col}`);
         let image = document.createElement('img');
         image.src = 'horse.svg';
         image.classList.add('knight');
+        location.classList.add('hasKnight');
         location.appendChild(image);
     }
-    return { placeKnight };
+    const removeKnight = () => {
+        //check if knight is placed. If true, remove knight. Else, nothing.
+        let knightHost = document.querySelector('.hasKnight')
+        if (!knightHost) { 
+            console.log('error: Knight not found');
+            return;
+        }
+        let knight;
+        knight = knightHost.removeChild(document.querySelector('.knight'));
+        knightHost.classList.remove('hasKnight');
+        return knight;
+    }
+    const moveKnight = (row, col) => {
+        let knight = removeKnight();
+        let newHost = document.getElementById(`row${row}col${col}`);
+        newHost.classList.add('hasKnight');
+        newHost.appendChild(knight);
+    }
+    return { createKnight, moveKnight };
 }
   
 chessBoard().setupBoard();
-knight().placeKnight(0, 0);
+knight().createKnight(0, 0);
