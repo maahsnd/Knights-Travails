@@ -51,8 +51,8 @@ const chessBoard = () => {
     return { setupBoard };
   };
 
-const knight = () => {
-    const createKnight = (row, col) => {
+const renderKnight = () => {
+    const create = (row, col) => {
         let location = document.getElementById(`row${row}col${col}`);
         let image = document.createElement('img');
         image.src = 'horse.svg';
@@ -60,7 +60,7 @@ const knight = () => {
         location.classList.add('hasKnight');
         location.appendChild(image);
     }
-    const removeKnight = () => {
+    const remove = () => {
         //check if knight is placed. If true, remove knight. Else, nothing.
         let knightHost = document.querySelector('.hasKnight')
         if (!knightHost) { 
@@ -72,14 +72,49 @@ const knight = () => {
         knightHost.classList.remove('hasKnight');
         return knight;
     }
-    const moveKnight = (row, col) => {
-        let knight = removeKnight();
+    const move = (row, col) => {
+        let knight = remove();
         let newHost = document.getElementById(`row${row}col${col}`);
         newHost.classList.add('hasKnight');
         newHost.appendChild(knight);
     }
-    return { createKnight, moveKnight };
+    return { create, move };
+}
+/* 
+const getCurrentPos = () => {
+    let knightHost = document.getElementsByClassName('hasKnight');
+    let coordinatesRaw = knightHost[0].id;
+    let coordinates = coordinatesRaw.slice(3).split('col');
+    //returns coordinates as array of [row, column]
+    return coordinates;
+} */
+
+function rangeCheck(array) {
+    if (array[0] < 8 && array[0] > -1) {
+        if (array[1] < 8 && array[1] > -1){
+            return array;
+        }
+        return null;
+    }
+    return null;
+}
+
+class Node {
+    //coord is array of [row, column]
+    constructor(coord){
+        this.position = coord;
+        this.row = coord[0];
+        this.col = coord[1];
+        this.one = rangeCheck([(row + 2), (col + 1)]);
+        this.two = rangeCheck([(row + 1), (col + 2)]);
+        this.three = rangeCheck([(row - 1), (col + 2)]);
+        this.four = rangeCheck([(row - 2), (col + 1)]);
+        this.five = rangeCheck([(row - 2), (col - 1)]);
+        this.six = rangeCheck([(row - 1), (col - 2)]);
+        this.seven = rangeCheck([(row + 1), (col - 2)]);
+        this.eight = rangeCheck([(row + 2), (col - 1)]);
+    }
 }
   
 chessBoard().setupBoard();
-knight().createKnight(0, 0);
+renderKnight().create(0, 0);
