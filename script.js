@@ -44,7 +44,7 @@ const chessBoard = () => {
     /* create board. Call create row in a loop 8 times, passing in 
       i as row number */
     const setupBoard = () => {
-      for (let i = 0; i < 8; i++) {
+      for (let i = 7; i > -1; i--) {
         createRow(i);
       }
     };
@@ -101,18 +101,19 @@ function rangeCheck(array) {
 
 class Node {
     //coord is array of [row, column]
-    constructor(coord){
+    constructor(coord, parent = null){
+        this.parent = parent;
         this.position = coord;
         this.row = coord[0];
         this.col = coord[1];
-        this.one = rangeCheck([(row + 2), (col + 1)]);
-        this.two = rangeCheck([(row + 1), (col + 2)]);
-        this.three = rangeCheck([(row - 1), (col + 2)]);
-        this.four = rangeCheck([(row - 2), (col + 1)]);
-        this.five = rangeCheck([(row - 2), (col - 1)]);
-        this.six = rangeCheck([(row - 1), (col - 2)]);
-        this.seven = rangeCheck([(row + 1), (col - 2)]);
-        this.eight = rangeCheck([(row + 2), (col - 1)]);
+        this.one = rangeCheck([(this.row + 2), (this.col + 1)]);
+        this.two = rangeCheck([(this.row + 1), (this.col + 2)]);
+        this.three = rangeCheck([(this.row - 1), (this.col + 2)]);
+        this.four = rangeCheck([(this.row - 2), (this.col + 1)]);
+        this.five = rangeCheck([(this.row - 2), (this.col - 1)]);
+        this.six = rangeCheck([(this.row - 1), (this.col - 2)]);
+        this.seven = rangeCheck([(this.row + 1), (this.col - 2)]);
+        this.eight = rangeCheck([(this.row + 2), (this.col - 1)]);
     }
 }
   
