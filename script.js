@@ -83,9 +83,8 @@ const renderKnight = () => {
 
 class Node {
     //coord is array of [row, column], numbers indicate available moves
-    constructor(parent =null, childNumber = null, coord, distance = 0, one = null, two = null, three= null, four= null, five= null, six= null, seven= null, eight= null){
+    constructor(parent =null, coord, distance = 0, one = null, two = null, three= null, four= null, five= null, six= null, seven= null, eight= null){
         this.parent = parent;
-        this.childNumber = childNumber;
         this.position = coord;
         this.distance = distance;
         this.row = coord[0];
@@ -102,9 +101,9 @@ class Node {
 }
 
 class Tree {
-    constructor( coord ) {
+    constructor( coord, destination ) {
         this.coord = coord;
-        this.root = buildTree(coord);
+        this.root = buildTree().build(coord, destination);
     }
 }
 
@@ -122,25 +121,22 @@ function checkArray(array, value) {
     return array.some((element) => value === element);
 }
 
-function checkAll(cacheArray, node) {
-  let inRange = rangeCheck(node.position);
+function checkAll(cacheArray, moveRef, moveCoordinates) {
+  let inRange = rangeCheck(moveCoordinates);
   if (inRange === null) return false;
-  let moveRef = toInt(node);
   let alreadyVisited = checkArray(cacheArray, moveRef);
   if (alreadyVisited === true) return false;
   return true;
 }
 
-function toInt(node) {
-  //root has no parent, return position in place of move to avoid accessing null
-  if (!node.parent) return 00;
-  let destination = parseInt(`${node.position[0]}`+ `${node.position[1]}`);
-  let origin = parseInt(`${node.parent.position[0]}`+ `${node.parent.position[1]}`);
+function toInt(moveCoordinates, parent) {
+  let destination = parseInt(`${moveCoordinates[0]}`+ `${moveCoordinates[1]}`);
+  let origin = parseInt(`${parent.position[0]}`+ `${parent.position[1]}`);
   let move = parseInt(`${origin}`+`${destination}`);
   return move
 }
 
-const moves = () => {
+ const moves = () => {
   const one = (coord) => [(coord[0] + 2), (coord[1] + 1)];
   const two = (coord) => [(coord[0] + 1), (coord[1] + 2)];
   const three = (coord) => [(coord[0] - 1), (coord[1] + 2)];
@@ -152,37 +148,44 @@ const moves = () => {
   return { one, two, three, four, five, six, seven, eight }
 }
 
-function buildTree(rootCoord, destination) {
-  if (!rootCoord) return false;
-  if (!rangeCheck(rootCoord)) return false;
+const buildTree = () => {
   let queue = [];
   let movesArr = [];
-  let root = new Node(null, null, rootCoord);
-  queue.push(root);
-  while (queue.length) {
-    if (node.position === destination) break;
-    let node = queue.shift();
-    let test = checkAll(movesArr, node);
+  const build = (rootCoord, destination) => {
+    if (!rootCoord) return false;
+    if (!rangeCheck(rootCoord)) return false;
+    let root = new Node(null, rootCoord);
+    queue.push(root);
+    while (queue.length){
+      let node = queue.shift();
+      if (node.position[0] === destination[0] &&
+         node.position[1] === destination[1]) { break }
+      node.one = handleMove(moves().one(node.position), node);
+      node.two = handleMove(moves().two(node.position), node);
+      node.three = handleMove(moves().three(node.position), node);
+      node.four = handleMove(moves().four(node.position), node);
+      node.five = handleMove(moves().five(node.position), node);
+      node.six = handleMove(moves().six(node.position), node);
+      node.seven = handleMove(moves().seven(node.position), node);
+      node.eight = handleMove(moves().eight(node.position), node);
+    }
+    return root;
+  }
+  const handleMove = (moveCoordinates, parent) => {
+    let move = toInt(moveCoordinates, parent)
+    let test = checkAll(movesArr,move, moveCoordinates);
     if (test) {
-      movesArr.push(toInt(node));
-      node.one = new Node(node, 'one', moves().one(node.position), node.distance + 1);
-      node.two = new Node(node,'two', moves().two(node.position), node.distance + 1);
-      node.three = new Node(node,'three', moves().three(node.position), node.distance + 1);
-      node.four = new Node(node, 'four', moves().four(node.position), node.distance + 1);
-      node.five = new Node(node, 'five', moves().five(node.position), node.distance + 1);
-      node.six = new Node(node, 'six', moves().six(node.position), node.distance + 1);
-      node.seven = new Node(node, 'seven', moves().seven(node.position), node.distance + 1);
-      node.eight = new Node(node, 'eight', moves().eight(node.position), node.distance + 1);
-      queue.push(node.one, node.two, node.three, node.four,
-        node.five, node.six, node.seven, node.eight);
+      let node = new Node(parent, moveCoordinates);
+      movesArr.push(move);
+      queue.push(node);
+      return node
     }
     if (!test) {
-      ///go back to parent, set invalid child to null
-      let num = (node.childNumber);
-      node.parent[num] = null;
+      let node = null;
+      return node;
     }
   }
-  return root;
+  return { build }
 }
 
 function doIt() {
